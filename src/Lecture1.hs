@@ -69,10 +69,7 @@ sumOfSquares x y = (x*x) + (y*y)
 -}
 -- DON'T FORGET TO SPECIFY THE TYPE IN HERE
 lastDigit :: Int -> Int
-lastDigit inputNum = 
-    if (inputNum < 0) 
-    then mod ((-1)*inputNum) 10
-    else mod inputNum 10
+lastDigit inputNum = mod (abs inputNum) 10
 
 {- | Write a function that takes three numbers and returns the
 difference between the biggest number and the smallest one.
@@ -87,20 +84,10 @@ Try to use local variables (either let-in or where) to implement this
 function.
 -}
 minmax :: Int -> Int -> Int -> Int
-minmax x y z = (max (max x y) z) - (min (min x y) z)
-    where 
-        max :: Int -> Int -> Int
-        max a b = 
-            if (a>b)
-            then a
-            else b
-        
-        min :: Int -> Int -> Int
-        min a b =
-            if (a < b)
-            then a
-            else b
-
+minmax x y z = 
+    let greatest = (max (max x y) z)
+        smallest = (min (min x y) z)
+    in greatest - smallest
 
 {- | Implement a function that takes a string, start and end positions
 and returns a substring of a given string from the start position to
@@ -125,10 +112,7 @@ subString start end str =
 
     where 
         evalStart :: Int -> Int
-        evalStart localStart = 
-            if (localStart < 0)
-            then 0
-            else localStart
+        evalStart localStart = max 0 localStart
 
 {- | Write a function that takes a String — space separated numbers,
 and finds a sum of the numbers inside this string.
@@ -139,14 +123,7 @@ and finds a sum of the numbers inside this string.
 The string contains only spaces and/or numbers.
 -}
 strSum :: String -> Int
-strSum str = 
-    sum 0 (words str)
-    where
-        sum :: Int -> [String] -> Int
-        sum result numbers =
-            if null numbers
-                then result
-                else sum (result + (read (head numbers) :: Int)) (tail numbers)
+strSum str = sum (map read (words str))
 
 
 {- | Write a function that takes a number and a list of numbers and
@@ -163,4 +140,15 @@ and lower than 6 elements (4, 5, 6, 7, 8 and 9).
 🕯 HINT: Use recursion to implement this function.
 -}
 lowerAndGreater :: Int->[Int]->String
-lowerAndGreater n list = ((show n) ++ " is greater than " ++ (show (length (filter (<n) list))) ++ " elements and lower than " ++ (show (length (filter (>n) list))) ++ " elements")
+lowerAndGreater n list = (show n) ++ " is greater than " ++ (show greaterCount) ++ " elements and lower than " ++ (show smallerCount) ++ " elements"
+    let counters =  [0,0]
+    in (countLowerAndGreater counters n numbers)
+
+    where 
+        countLowerAndGreater :: [Int] -> Int -> [Int] -> [Int]
+        countLowerAndGreater counters n numbers = 
+            if null numbers
+            then counters
+            else countLowerAndGreater (((tail counters) + ((\x y -> if x > y then 1 else 0) (head numbers) n)) : (((head counters) + ((\x y -> if x < y then 1 else 0) (head numbers) n )) : [])) n (tail numbers)
+
+-- lowerAndGreater n list = ((show n) ++ " is greater than " ++ (show (length (filter (<n) list))) ++ " elements and lower than " ++ (show (length (filter (>n) list))) ++ " elements")
