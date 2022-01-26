@@ -39,6 +39,7 @@ module Lecture2
     , eval
     , constantFolding
     ) where
+import GHC.Arr (accum)
 
 {- | Implement a function that finds a product of all the numbers in
 the list. But implement a lazier version of this function: if you see
@@ -48,7 +49,14 @@ zero, you can stop calculating product and return 0 immediately.
 84
 -}
 lazyProduct :: [Int] -> Int
-lazyProduct = error "TODO"
+lazyProduct [] = 0
+lazyProduct (x : xs) = multiply x xs
+  where
+    multiply :: Int -> [Int] -> Int
+    multiply 0 [] = 0
+    multiply acc [] = acc
+    multiply acc (a : ab) = multiply (acc*a) ab
+
 
 {- | Implement a function that duplicates every element in the list.
 
@@ -58,7 +66,17 @@ lazyProduct = error "TODO"
 "ccaabb"
 -}
 duplicate :: [a] -> [a]
-duplicate = error "TODO"
+duplicate list = tupleToList [] (zip list list)
+  where
+    tupleToList :: [a] -> [(a,a)] -> [a]
+    tupleToList acc [] = acc
+    tupleToList acc (a : ab) = tupleToList (acc ++ [fst a, snd a]) ab
+
+    -- addToList acc first rest = 
+    --   if null rest 
+    --   then (acc ++ (first : first : []))
+    --   else addToList (acc ++ (first : first : [])) (head rest) (tail rest) 
+  
 
 {- | Implement function that takes index and a list and removes the
 element at the given position. Additionally, this function should also
