@@ -71,11 +71,6 @@ duplicate list = tupleToList [] (zip list list)
     tupleToList :: [a] -> [(a,a)] -> [a]
     tupleToList acc [] = acc
     tupleToList acc (a : ab) = tupleToList (acc ++ [fst a, snd a]) ab
-
-    -- addToList acc first rest = 
-    --   if null rest 
-    --   then (acc ++ (first : first : []))
-    --   else addToList (acc ++ (first : first : [])) (head rest) (tail rest) 
   
 
 {- | Implement function that takes index and a list and removes the
@@ -88,7 +83,8 @@ return the removed element.
 >>> removeAt 10 [1 .. 5]
 (Nothing,[1,2,3,4,5])
 -}
-removeAt = error "TODO"
+removeAt :: Int -> (a, [a])
+removeAt idx list = (init (fst (splitAt 1 [1,3,4,5]))) ++ (snd (splitAt 1 [1,3,4,5]))
 
 {- | Write a function that takes a list of lists and returns only
 lists of even lengths.
