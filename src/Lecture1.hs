@@ -30,6 +30,7 @@ module Lecture1
     , strSum
     , lowerAndGreater
     ) where
+import GHC.Arr (accum)
 
 {- | Specify the type signature of the following function. Think about
 its behaviour, possible types for the function arguments and write the
@@ -136,15 +137,19 @@ and lower than 6 elements (4, 5, 6, 7, 8 and 9).
 🕯 HINT: Use recursion to implement this function.
 -}
 lowerAndGreater :: Int->[Int]->String
-lowerAndGreater n list = (show n) ++ " is greater than " ++ (show greaterCount) ++ " elements and lower than " ++ (show smallerCount) ++ " elements"
-    let counters =  [0,0]
-    in (countLowerAndGreater counters n numbers)
-
+lowerAndGreater n list = 
+    let counters = countLowerAndGreater [0,0] n list
+    in ((show n) ++ " is greater than " ++ (show (head counters)) ++ " elements and lower than " ++ (show (head (tail counters))) ++ " elements")
+    
     where 
         countLowerAndGreater :: [Int] -> Int -> [Int] -> [Int]
-        countLowerAndGreater counters n numbers = 
-            if null numbers
-            then counters
-            else countLowerAndGreater (((tail counters) + ((\x y -> if x > y then 1 else 0) (head numbers) n)) : (((head counters) + ((\x y -> if x < y then 1 else 0) (head numbers) n )) : [])) n (tail numbers)
-
--- lowerAndGreater n list = ((show n) ++ " is greater than " ++ (show (length (filter (<n) list))) ++ " elements and lower than " ++ (show (length (filter (>n) list))) ++ " elements")
+        countLowerAndGreater acc n lst = 
+            if null lst 
+            then acc
+            else countLowerAndGreater (countSmth acc n (head lst)) n (tail lst)
+ 
+        countSmth :: [Int] -> Int -> Int -> [Int]
+        countSmth accum num toCheck 
+            | toCheck < num = (head accum + 1) : (head (tail accum)) : []
+            | toCheck > num = (head accum) : (head (tail accum) + 1) : []
+            | otherwise = accum
