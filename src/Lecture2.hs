@@ -94,10 +94,6 @@ removeAt idx list = ((getElm idx list), (removeElm idx list))
     getElm idx lst = 
       if idx >= (length lst) then Nothing else Just (lst !! idx)   
 
--- removeAt idx list = splitter (splitAt (idx + 1) list)
---   where 
---     splitter :: ([a], [a]) -> (a, [a])
---     splitter tuppleOfLists = (head (tail (fst tuppleOfLists)) , ((head (fst tuppleOfLists)) : (snd tuppleOfLists)))
 
 {- | Write a function that takes a list of lists and returns only
 lists of even lengths.
@@ -108,7 +104,8 @@ lists of even lengths.
 ♫ NOTE: Use eta-reduction and function composition (the dot (.) operator)
   in this function.
 -}
-evenLists = error "TODO"
+evenLists :: [[a]] -> [[a]]
+evenLists lst = filter (even . length) lst
 
 {- | The @dropSpaces@ function takes a string containing a single word
 or number surrounded by spaces and removes all leading and trailing
