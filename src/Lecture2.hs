@@ -40,6 +40,7 @@ module Lecture2
     , constantFolding
     ) where
 import GHC.Arr (accum)
+import Data.Char
 
 {- | Implement a function that finds a product of all the numbers in
 the list. But implement a lazier version of this function: if you see
@@ -121,7 +122,8 @@ spaces.
 
 🕯 HINT: look into Data.Char and Prelude modules for functions you may use.
 -}
-dropSpaces = error "TODO"
+dropSpaces :: String -> String
+dropSpaces str = filter (not.isSpace) str
 
 {- |
 
