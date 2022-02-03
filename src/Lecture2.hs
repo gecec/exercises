@@ -83,8 +83,21 @@ return the removed element.
 >>> removeAt 10 [1 .. 5]
 (Nothing,[1,2,3,4,5])
 -}
-removeAt :: Int -> (a, [a])
-removeAt idx list = (init (fst (splitAt 1 [1,3,4,5]))) ++ (snd (splitAt 1 [1,3,4,5]))
+removeAt :: Int -> [a] -> (Maybe a, [a])
+removeAt idx list = ((getElm idx list), (removeElm idx list))
+  where 
+    removeElm :: Int -> [a] -> [a]
+    removeElm idx lst = if idx >= (length lst) then lst else (let (ys,zs) = splitAt idx lst in ys ++ (tail zs))
+
+    getElm :: Int -> [a] -> Maybe a
+    getElm idx [] = Nothing
+    getElm idx lst = 
+      if idx >= (length lst) then Nothing else Just (lst !! idx)   
+
+-- removeAt idx list = splitter (splitAt (idx + 1) list)
+--   where 
+--     splitter :: ([a], [a]) -> (a, [a])
+--     splitter tuppleOfLists = (head (tail (fst tuppleOfLists)) , ((head (fst tuppleOfLists)) : (snd tuppleOfLists)))
 
 {- | Write a function that takes a list of lists and returns only
 lists of even lengths.
