@@ -72,7 +72,7 @@ duplicate list = tupleToList [] (zip list list)
     tupleToList :: [a] -> [(a,a)] -> [a]
     tupleToList acc [] = acc
     tupleToList acc (a : ab) = tupleToList (acc ++ [fst a, snd a]) ab
-  
+
 
 {- | Implement function that takes index and a list and removes the
 element at the given position. Additionally, this function should also
@@ -86,14 +86,14 @@ return the removed element.
 -}
 removeAt :: Int -> [a] -> (Maybe a, [a])
 removeAt idx list = ((getElm idx list), (removeElm idx list))
-  where 
+  where
     removeElm :: Int -> [a] -> [a]
     removeElm idx lst = if idx >= (length lst) then lst else (let (ys,zs) = splitAt idx lst in ys ++ (tail zs))
 
     getElm :: Int -> [a] -> Maybe a
     getElm idx [] = Nothing
-    getElm idx lst = 
-      if idx >= (length lst) then Nothing else Just (lst !! idx)   
+    getElm idx lst =
+      if idx >= (length lst) then Nothing else Just (lst !! idx)
 
 
 {- | Write a function that takes a list of lists and returns only
@@ -180,13 +180,63 @@ You're free to define any helper functions.
 -}
 
 -- some help in the beginning ;)
-data Knight = Knight
+data Knight = MkKnight
     { knightHealth    :: Int
     , knightAttack    :: Int
     , knightEndurance :: Int
+    , strikeCount     :: Int
     }
 
-dragonFight = error "TODO"
+data Chest = MkChest
+    { chestGold     :: Int
+    --, chestTreasure :: a
+    }
+
+data Dragon = MkDragon
+    {
+      dragonHealth :: Int,
+      dragonGold :: Int,
+      -- dragonTreasure :: a,
+      dragonExpPoints :: Int,
+      dragonFirePower :: Int
+    }
+
+data Fight = MkFight
+  {
+    kn :: Knight,
+    dr :: Dragon
+  }
+
+dragonFight :: Fight -> Chest -> String
+dragonFight fight chest
+  | knightHealth (kn fight) <= 0 = "Knight is died. Game Over"
+  | dragonHealth (dr fight) <= 0 = "Dragon is died. You win!"
+  | knightEndurance (kn fight) == 0 = "Knight is tired and forced to flee in disgrace"
+  | otherwise = dragonFight (runFight fight) chest
+  where
+      runFight :: Fight -> Fight
+      runFight fght
+        = if strikeCount (kn fght) == 10 then
+              MkFight
+                {dr = dr fght,
+                 kn = MkKnight
+                        {knightHealth = knightHealth (kn fght)
+                                           - dragonFirePower (dr fght),
+                         knightAttack = knightAttack (kn fght),
+                         knightEndurance = knightEndurance (kn fght), strikeCount = 0}}
+          else
+              MkFight
+                {dr = MkDragon
+                        {dragonHealth = dragonHealth (dr fght)
+                                           - knightAttack (kn fght),
+                         dragonGold = dragonGold (dr fght),
+                         dragonExpPoints = dragonExpPoints (dr fght),
+                         dragonFirePower = dragonFirePower (dr fght)},
+                 kn = MkKnight
+                        {knightHealth = knightHealth (kn fght),
+                         knightAttack = knightAttack (kn fght),
+                         knightEndurance = knightEndurance (kn fght) - 1,
+                         strikeCount = strikeCount (kn fght) + 1}}
 
 ----------------------------------------------------------------------------
 -- Challenges
