@@ -187,34 +187,44 @@ data Knight = MkKnight
     , strikeCount     :: Int
     }
 
-data Chest = MkChest
+data Chest a = MkChest
     { chestGold     :: Int
-    --, chestTreasure :: a
+    , chestTreasure :: a
     }
 
-data Dragon = MkDragon
+data Dragon a = MkDragon
     {
       dragonHealth :: Int,
       dragonGold :: Int,
-      -- dragonTreasure :: a,
+      dragonTreasure :: a,
       dragonExpPoints :: Int,
       dragonFirePower :: Int
     }
 
-data Fight = MkFight
+data Fight a = MkFight
   {
     kn :: Knight,
-    dr :: Dragon
+    dr :: Dragon a
   }
 
-dragonFight :: Fight -> Chest -> String
+type Armor = Int
+type Sword = Int
+type Artifact = Int
+
+
+type BronzeChest = Chest Armor
+type SilverChest = Chest (Sword, Armor)
+type GoldenChest = Chest (Artifact, Sword)
+
+
+dragonFight :: Fight a -> Chest a -> String
 dragonFight fight chest
   | knightHealth (kn fight) <= 0 = "Knight is died. Game Over"
   | dragonHealth (dr fight) <= 0 = "Dragon is died. You win!"
   | knightEndurance (kn fight) == 0 = "Knight is tired and forced to flee in disgrace"
   | otherwise = dragonFight (runFight fight) chest
   where
-      runFight :: Fight -> Fight
+      runFight :: Fight a -> Fight a
       runFight fght
         = if strikeCount (kn fght) == 10 then
               MkFight
@@ -257,7 +267,11 @@ False
 True
 -}
 isIncreasing :: [Int] -> Bool
-isIncreasing = error "TODO"
+isIncreasing list =
+  if null list then True
+  else if length list == 1 then True
+  else if ((list !! 1) - (head list)) == 1 then isIncreasing (tail list)
+  else False
 
 {- | Implement a function that takes two lists, sorted in the
 increasing order, and merges them into new list, also sorted in the
